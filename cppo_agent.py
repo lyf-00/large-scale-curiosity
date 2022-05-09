@@ -66,7 +66,7 @@ class PpoOptimizer(object):
             approxkl = .5 * tf.reduce_mean(tf.square(neglogpac - self.ph_oldnlp))
             clipfrac = tf.reduce_mean(tf.to_float(tf.abs(pg_losses2 - pg_loss_surr) > 1e-6))
 
-            self.total_loss = pg_loss + ent_loss + vf_loss
+            self.total_loss = pg_loss + ent_loss + vf_loss  # loss
             self.to_report = {'tot': self.total_loss, 'pg': pg_loss, 'vf': vf_loss, 'ent': entropy,
                               'approxkl': approxkl, 'clipfrac': clipfrac}
 

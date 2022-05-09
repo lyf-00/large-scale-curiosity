@@ -41,7 +41,7 @@ class Dynamics(object):
         return x
 
     def get_loss(self):
-        ac = tf.one_hot(self.ac, self.ac_space.n, axis=2)
+        ac = tf.one_hot(self.ac, self.ac_space.n, axis=2)   # action
         sh = tf.shape(ac)
         ac = flatten_two_dims(ac)
 
@@ -49,10 +49,10 @@ class Dynamics(object):
             return tf.concat([x, ac], axis=-1)
 
         with tf.variable_scope(self.scope):
-            x = flatten_two_dims(self.features)
+            x = flatten_two_dims(self.features) # feature
             x = tf.layers.dense(add_ac(x), self.hidsize, activation=tf.nn.leaky_relu)
 
-            def residual(x):
+            def residual(x):    # DIFF : residual architecture?
                 res = tf.layers.dense(add_ac(x), self.hidsize, activation=tf.nn.leaky_relu)
                 res = tf.layers.dense(add_ac(res), self.hidsize, activation=None)
                 return x + res
@@ -64,7 +64,7 @@ class Dynamics(object):
             x = unflatten_first_dim(x, sh)
         return tf.reduce_mean((x - tf.stop_gradient(self.out_features)) ** 2, -1)
 
-    def calculate_loss(self, ob, last_ob, acs):
+    def calculate_loss(self, ob, last_ob, acs): # ICM calculate loss -> reward
         n_chunks = 8
         n = ob.shape[0]
         chunk_size = n // n_chunks

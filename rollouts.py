@@ -21,7 +21,7 @@ class Rollout(object):
         self.policy = policy
         self.dynamics = dynamics
 
-        self.reward_fun = lambda ext_rew, int_rew: ext_rew_coeff * np.clip(ext_rew, -1., 1.) + int_rew_coeff * int_rew
+        self.reward_fun = lambda ext_rew, int_rew: ext_rew_coeff * np.clip(ext_rew, -1., 1.) + int_rew_coeff * int_rew # default:  ext_rew_coeff=0,int_rew_coeff=1
 
         self.buf_vpreds = np.empty((nenvs, self.nsteps), np.float32)
         self.buf_nlps = np.empty((nenvs, self.nsteps), np.float32)
@@ -59,7 +59,7 @@ class Rollout(object):
     def calculate_reward(self):
         int_rew = self.dynamics.calculate_loss(ob=self.buf_obs,
                                                last_ob=self.buf_obs_last,
-                                               acs=self.buf_acs)
+                                               acs=self.buf_acs)    # ICM get intrinsic rewards
         self.buf_rews[:] = self.reward_fun(int_rew=int_rew, ext_rew=self.buf_ext_rews)
 
     def rollout_step(self):

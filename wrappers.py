@@ -60,7 +60,7 @@ class ProcessFrame84(gym.ObservationWrapper):
         return ProcessFrame84.process(obs, crop=self.crop)
 
     @staticmethod
-    def process(frame, crop=True):
+    def process(frame, crop=True):  # process frame: not only resize
         if frame.size == 210 * 160 * 3:
             img = np.reshape(frame, [210, 160, 3]).astype(np.float32)
         elif frame.size == 250 * 160 * 3:
@@ -179,7 +179,7 @@ class MarioXReward(gym.Wrapper):
             self.current_max_x = 0.
             reward = 0.
             self.visited_levels.add(tuple(self.current_level))
-        else:
+        else:   # extrinsic reward is different
             if currentx > self.current_max_x:
                 delta = currentx - self.current_max_x
                 self.current_max_x = currentx
@@ -248,11 +248,11 @@ def make_mario_env(crop=True, frame_stack=True, clip_rewards=False):
     env = retro.make('SuperMarioBros-Nes', 'Level1-1')
     buttons = env.BUTTONS
     env = MarioXReward(env)
-    env = FrameSkip(env, 4)
-    env = ProcessFrame84(env, crop=crop)
+    env = FrameSkip(env, 4) # DIFF: No FrameSkip in pytorch?
+    env = ProcessFrame84(env, crop=crop)    # DIFF: different Process Frame?
     if frame_stack:
         env = FrameStack(env, 4)
-    env = LimitedDiscreteActions(env, buttons)
+    env = LimitedDiscreteActions(env, buttons)  # DIFF
     return env
 
 

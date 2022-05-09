@@ -44,7 +44,7 @@ class Trainer(object):
         self.num_timesteps = num_timesteps
         self._set_env_vars()
 
-        self.policy = CnnPolicy(
+        self.policy = CnnPolicy(    # policy
             scope='pol',
             ob_space=self.ob_space,
             ac_space=self.ac_space,
